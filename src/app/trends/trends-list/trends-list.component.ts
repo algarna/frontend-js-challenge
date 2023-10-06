@@ -18,6 +18,7 @@ import { selectTrendsByProvider } from '../store/selectors';
         <p class="trend__excerpt">{{ trend.body[0] }}</p>
       </a>
     </article>
+    <app-trend-add></app-trend-add>
   `,
   styleUrls: ['./trends-list.component.scss'],
 })
