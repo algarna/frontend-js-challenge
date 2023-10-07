@@ -28,6 +28,7 @@
   padding: 0;
   text-align: center;
   background-color: color.scale($primary, $alpha: -80%);
+  cursor: pointer;
 
   &:active {
     transform: scale(0.95);

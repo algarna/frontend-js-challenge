@@ -3,6 +3,8 @@ import { Store } from '@ngrx/store';
 
 import { selectSelectedTrend } from '../store/selectors';
 import { TrendEditComponent } from '../trend-edit/trend-edit.component';
+import { TrendService } from '../trend.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-trend-detail',
@@ -21,7 +23,11 @@ import { TrendEditComponent } from '../trend-edit/trend-edit.component';
           >
             <img src="assets/Iconos/Actions/edit.svg" alt="Editar noticia" />
           </button>
-          <button type="button" class="trend__action">
+          <button
+            type="button"
+            class="trend__action"
+            (click)="deleteTrend(trend.id)"
+          >
             <img src="assets/Iconos/Actions/delete.svg" alt="Borrar noticia" />
           </button>
         </div>
@@ -57,10 +63,22 @@ export class TrendDetailComponent {
 
   @ViewChild('trendForm') trendForm!: TrendEditComponent;
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private trendService: TrendService,
+    private router: Router
+  ) {}
 
   toggleTrendForm(isEdit: boolean = false) {
     this.isEdit = isEdit;
     this.trendForm.toggle();
+  }
+
+  deleteTrend(id: string) {
+    if (confirm('¿Seguro que desea borrar esta noticia?')) {
+      this.trendService
+        .deleteOne(id)
+        .subscribe(() => this.router.navigate(['trends']));
+    }
   }
 }
