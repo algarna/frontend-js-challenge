@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { selectSelectedTrend } from '../store/selectors';
+import { TrendEditComponent } from '../trend-edit/trend-edit.component';
 
 @Component({
   selector: 'app-trend-detail',
@@ -35,11 +36,26 @@ import { selectSelectedTrend } from '../store/selectors';
         </div>
       </div>
     </article>
+    <app-trend-add (click)="toggleTrendForm()"></app-trend-add>
+    <app-trend-edit
+      #trendForm
+      [isEdit]="isEdit"
+      [isActive]="isFormActive"
+    ></app-trend-edit>
   `,
   styleUrls: ['./trend-detail.component.scss'],
 })
 export class TrendDetailComponent {
   protected trend$ = this.store.select(selectSelectedTrend);
 
+  isEdit: boolean = false;
+  isFormActive: boolean = false;
+
+  @ViewChild('trendForm') trendForm!: TrendEditComponent;
+
   constructor(private store: Store) {}
+
+  toggleTrendForm() {
+    this.trendForm.toggle();
+  }
 }

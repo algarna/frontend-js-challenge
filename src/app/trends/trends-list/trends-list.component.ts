@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { loadTrends } from '../store/actions/trends-list-page.actions';
 import { selectTrendsByProvider } from '../store/selectors';
+import { TrendEditComponent } from '../trend-edit/trend-edit.component';
 
 @Component({
   selector: 'app-trends-list',
@@ -18,16 +19,30 @@ import { selectTrendsByProvider } from '../store/selectors';
         <p class="trend__excerpt">{{ trend.body[0] }}</p>
       </a>
     </article>
-    <app-trend-add></app-trend-add>
+    <app-trend-add (click)="toggleTrendForm()"></app-trend-add>
+    <app-trend-edit
+      #trendForm
+      [isEdit]="isEdit"
+      [isActive]="isFormActive"
+    ></app-trend-edit>
   `,
   styleUrls: ['./trends-list.component.scss'],
 })
 export class TrendsListComponent implements OnInit {
   protected trends$ = this.store.select(selectTrendsByProvider);
 
+  isEdit: boolean = false;
+  isFormActive: boolean = false;
+
+  @ViewChild('trendForm') trendForm!: TrendEditComponent;
+
   constructor(private store: Store) {}
 
   ngOnInit() {
     this.store.dispatch(loadTrends());
+  }
+
+  toggleTrendForm() {
+    this.trendForm.toggle();
   }
 }

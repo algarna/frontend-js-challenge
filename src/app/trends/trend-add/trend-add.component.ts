@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-trend-add',
   template: `
-    <button class="app-button app-button--primary app-button--fixed" (click)="openSlideOut()">
+    <button class="app-button app-button--primary app-button--fixed">
       <img src="assets/Iconos/Actions/add.svg" alt="Nueva noticia" />
     </button>
   `,
@@ -14,7 +14,4 @@ export class TrendAddComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openSlideOut() {
-    throw new Error('Method not implemented.');
-  }
 }

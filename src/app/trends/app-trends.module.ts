@@ -12,15 +12,19 @@ import { TrendsListComponent } from './trends-list/trends-list.component';
 import { trendsEffects } from './store/effects';
 import { trendsFeatureKey, trendsReducer } from './store/reducers';
 import { TrendAddComponent } from './trend-add/trend-add.component';
+import { TrendEditComponent } from './trend-edit/trend-edit.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [TrendsListComponent, TrendDetailComponent, TrendAddComponent],
+  declarations: [TrendsListComponent, TrendDetailComponent, TrendAddComponent, TrendEditComponent],
   imports: [
     CommonModule,
     AppTrendsRoutingModule,
     HttpClientModule,
     StoreModule.forFeature(trendsFeatureKey, trendsReducer),
     EffectsModule.forFeature(trendsEffects),
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [TrendsListComponent],
   providers: [
