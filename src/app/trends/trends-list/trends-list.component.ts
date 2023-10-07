@@ -22,7 +22,6 @@ import { TrendEditComponent } from '../trend-edit/trend-edit.component';
     <app-trend-add (click)="toggleTrendForm()"></app-trend-add>
     <app-trend-edit
       #trendForm
-      [isEdit]="isEdit"
       [isActive]="isFormActive"
     ></app-trend-edit>
   `,
@@ -31,7 +30,6 @@ import { TrendEditComponent } from '../trend-edit/trend-edit.component';
 export class TrendsListComponent implements OnInit {
   protected trends$ = this.store.select(selectTrendsByProvider);
 
-  isEdit: boolean = false;
   isFormActive: boolean = false;
 
   @ViewChild('trendForm') trendForm!: TrendEditComponent;

@@ -14,7 +14,11 @@ import { TrendEditComponent } from '../trend-edit/trend-edit.component';
     <article class="trend__detail" *ngIf="trend$ | async as trend">
       <header class="trend__header">
         <div class="trend__actions">
-          <button type="button" class="trend__action">
+          <button
+            type="button"
+            class="trend__action"
+            (click)="toggleTrendForm(true)"
+          >
             <img src="assets/Iconos/Actions/edit.svg" alt="Editar noticia" />
           </button>
           <button type="button" class="trend__action">
@@ -55,7 +59,8 @@ export class TrendDetailComponent {
 
   constructor(private store: Store) {}
 
-  toggleTrendForm() {
+  toggleTrendForm(isEdit: boolean = false) {
+    this.isEdit = isEdit;
     this.trendForm.toggle();
   }
 }
