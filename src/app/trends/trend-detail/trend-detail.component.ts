@@ -1,10 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { selectSelectedTrend } from '../store/selectors';
 import { TrendEditComponent } from '../trend-edit/trend-edit.component';
 import { TrendService } from '../trend.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-trend-detail',
@@ -55,8 +56,9 @@ import { Router } from '@angular/router';
   `,
   styleUrls: ['./trend-detail.component.scss'],
 })
-export class TrendDetailComponent {
-  protected trend$ = this.store.select(selectSelectedTrend);
+export class TrendDetailComponent implements OnDestroy {
+  trend$ = this.store.select(selectSelectedTrend);
+  trendSubscription$!: Subscription;
 
   isEdit: boolean = false;
   isFormActive: boolean = false;
@@ -71,7 +73,14 @@ export class TrendDetailComponent {
 
   toggleTrendForm(isEdit: boolean = false) {
     this.isEdit = isEdit;
-    this.trendForm.toggle();
+
+    if (this.isEdit) {
+      this.trendSubscription$ = this.trend$.subscribe((trend) => {
+        this.trendForm.toggle(isEdit, trend);
+      });
+    } else {
+      this.trendForm.toggle(isEdit);
+    }
   }
 
   deleteTrend(id: string) {
@@ -79,6 +88,12 @@ export class TrendDetailComponent {
       this.trendService
         .deleteOne(id)
         .subscribe(() => this.router.navigate(['trends']));
+    }
+  }
+
+  ngOnDestroy(): void {
+    if(this.trendSubscription$) {
+      this.trendSubscription$.unsubscribe();
     }
   }
 }

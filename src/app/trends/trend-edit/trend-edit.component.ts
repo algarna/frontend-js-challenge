@@ -1,6 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Trend } from '../models/trend.model';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { GetAllTrendProvidersResponse } from '../models/get-all-trend-providers-response';
+import { TrendService } from '../trend.service';
 
 @Component({
   selector: 'app-trend-edit',
@@ -10,7 +13,7 @@ import { FormControl, FormGroup } from '@angular/forms';
       <form class="trend-edit-form" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="trend-edit-form__header">
           <div class="trend-edit-form__header__title">
-            <h4>{{ isEdit? "Edita la noticia" : "Nueva noticia" }}</h4>
+            <h4>{{ isEdit ? 'Edita la noticia' : 'Nueva noticia' }}</h4>
           </div>
           <div class="trend-edit-form__buttons">
             <button
@@ -35,8 +38,20 @@ import { FormControl, FormGroup } from '@angular/forms';
           </div>
 
           <div class="trend-edit-form__fields__input">
-            <label>Autor</label>
-            <input class="app-input" type="text" formControlName="author" />
+            <label>Imagen</label>
+            <input class="app-input" type="text" formControlName="image" />
+          </div>
+
+          <div class="trend-edit-form__fields__input">
+            <label>Proveedor</label>
+            <select class="app-input" formControlName="provider">
+              <option
+                *ngFor="let provider of getAllTrendProvidersResponse"
+                [value]="provider.value"
+              >
+                {{ provider.name }}
+              </option>
+            </select>
           </div>
 
           <div class="trend-edit-form__fields__input">
@@ -49,7 +64,8 @@ import { FormControl, FormGroup } from '@angular/forms';
             <textarea
               class="app-input"
               type="textarea"
-              formControlName="content"
+              formControlName="body"
+              placeholder="Escribe aquí..."
             ></textarea>
           </div>
         </div>
@@ -61,31 +77,84 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class TrendEditComponent implements OnInit {
   @Input() isEdit: boolean = false;
 
-  @Input() trend: Trend | null = null;
-
   @Input() isActive: boolean = false;
 
+  getAllTrendProvidersResponse = GetAllTrendProvidersResponse;
+
+  trendId: string | null = null;
+
   public form = new FormGroup({
-    url: new FormControl<string>(''),
-    author: new FormControl<string>(''),
-    title: new FormControl<string>(''),
-    content: new FormControl<string>(''),
+    url: new FormControl<string>('', [Validators.required]),
+    image: new FormControl<string>('', [Validators.required]),
+    provider: new FormControl<string>('', [Validators.required]),
+    title: new FormControl<string>('', [Validators.required]),
+    body: new FormControl<string>('', [Validators.required]),
   });
 
-  constructor() {}
+  constructor(
+    private store: Store,
+    private trendService: TrendService
+  ) {}
 
   ngOnInit(): void {}
 
-  toggle() {
+  toggle(isEdit: boolean = false, trend: Trend | null = null) {
     this.isActive = !this.isActive;
+    this.isEdit = isEdit;
+    if (this.isEdit && trend) {
+      this.trendId = trend.id;
+      this.form.get('url')?.setValue(trend.url);
+      this.form.get('image')?.setValue(trend.image);
+      this.form.get('provider')?.setValue(trend.provider);
+      this.form.get('title')?.setValue(trend.title);
+      this.form.get('body')?.setValue(trend.body.join('\n'));
+    } else {
+      this.trendId = null;
+    }
   }
 
   onSubmit() {
-    throw new Error('Method not implemented.');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (this.isEdit && this.trendId) {
+      //Edit
+      this.trendService
+        .updateOne(
+          this.getUpdatedChanges(),
+          this.trendId
+        )
+        .subscribe((res) => {
+          //TODO: Update store
+          this.onCancel();
+        });
+    } else {
+      //Add
+      const formTrend = this.form.value as Partial<Trend>;
+      this.trendService
+        .createOne(this.form.value as Partial<Trend>)
+        .subscribe((res) => {
+          //TODO: Update store
+          this.onCancel();
+        });
+    }
   }
 
   onCancel() {
     this.form.reset();
     this.isActive = false;
+  }
+
+  getUpdatedChanges() {
+    let changedValues: Record<string, string> = {};
+    Object.entries(this.form.controls).forEach((entry) => {
+      let [key, control] = entry;
+      if (control.dirty && key && control.value) {
+        changedValues[key] = control.value;
+      }
+    });
+    return changedValues;
   }
 }

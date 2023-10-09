@@ -21,7 +21,7 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: #FFFFFF;
   border-top-left-radius: 5%;
 
   @media screen and (max-width: 767px) {
@@ -100,14 +100,14 @@
     &__input {
       display: flex;
       flex-direction: column;
-      justify-content: start;
+      justify-content: flex-start;
       align-items: center;
       width: 100%;
 
       >input,
       textarea {
         width: 100%;
-        border-color: 1px solid $secondary;
+        border: 1px solid $accent;
       }
 
       >label {
@@ -120,6 +120,13 @@
 
       >input {
         padding: 15px 15px;
+      }
+
+      >select {
+        width: 100%;
+        padding: 15px 15px;
+        background-color: #FFFFFF;
+        border: 1px solid $accent;
       }
 
       >textarea {
