@@ -176,6 +176,7 @@ export class TrendEditComponent implements OnInit {
     this.isActive = !this.isActive;
     this.isEdit = isEdit;
     this.trend = trend;
+    this.form.reset();
     if (this.isEdit && trend) {
       this.form.get('url')?.setValue(trend.url);
       this.form.get('image')?.setValue(trend.image);
@@ -206,7 +207,6 @@ export class TrendEditComponent implements OnInit {
           trend: this.form.value as Partial<Trend>,
         })
       );
-      this.onCancel();
     }
   }
 

@@ -44,6 +44,9 @@ export class TrendsEffects {
       mergeMap((data) =>
         this.trendService.createOne(data?.trend).pipe(
           map((trend) => TrendsApiActions.createOneTrendSuccess({ trend })),
+          tap((trendAction) =>
+            this.router.navigate(['trends', trendAction.trend.id])
+          ),
           catchError(() => of(TrendsApiActions.createOneTrendError()))
         )
       )
@@ -56,6 +59,9 @@ export class TrendsEffects {
       switchMap((data) =>
         this.trendService.updateOne(data?.trend).pipe(
           map((trend) => TrendsApiActions.updateOneTrendSuccess({ trend })),
+          tap((trendAction) =>
+            this.router.navigate(['trends', trendAction.trend.id])
+          ),
           catchError(() => of(TrendsApiActions.updateOneTrendError()))
         )
       )
