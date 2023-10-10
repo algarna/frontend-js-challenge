@@ -34,17 +34,57 @@ import { TrendService } from '../trend.service';
         <div class="trend-edit-form__fields">
           <div class="trend-edit-form__fields__input">
             <label>URL</label>
-            <input class="app-input" type="text" formControlName="url" />
+            <input
+              class="app-input"
+              type="text"
+              formControlName="url"
+              [ngClass]="{
+                'trend-edit-form__fields__input__error':
+                  form.controls.url.errors?.['required']
+                  && form.controls.url.touched
+              }"
+            />
+            <div
+              class="trend-edit-form__fields__error"
+              *ngIf="form.controls.url.errors?.['required']
+                && form.controls.url.touched"
+            >
+              Este campo es obligatorio
+            </div>
           </div>
 
           <div class="trend-edit-form__fields__input">
             <label>Imagen</label>
-            <input class="app-input" type="text" formControlName="image" />
+            <input
+              class="app-input"
+              type="text"
+              formControlName="image"
+              [ngClass]="{
+                'trend-edit-form__fields__input__error':
+                  form.controls.image.errors?.['required']
+                  && form.controls.image.touched
+              }"
+            />
+            <div
+              class="trend-edit-form__fields__error"
+              *ngIf="form.controls.image.errors?.['required']
+                && form.controls.image.touched"
+            >
+              Este campo es obligatorio
+            </div>
           </div>
 
           <div class="trend-edit-form__fields__input">
             <label>Proveedor</label>
-            <select class="app-input" formControlName="provider">
+            <select
+              class="app-input"
+              formControlName="provider"
+              [ngClass]="{
+                'trend-edit-form__fields__input__error':
+                  form.controls.provider.errors?.['required']
+                  && form.controls.provider.touched
+              }"
+            >
               <option
                 *ngFor="let provider of getAllTrendProvidersResponse"
                 [value]="provider.value"
@@ -52,11 +92,34 @@ import { TrendService } from '../trend.service';
                 {{ provider.name }}
               </option>
             </select>
+            <div
+              class="trend-edit-form__fields__error"
+              *ngIf="form.controls.provider.errors?.['required']
+                && form.controls.provider.touched"
+            >
+              Este campo es obligatorio
+            </div>
           </div>
 
           <div class="trend-edit-form__fields__input">
             <label>Título</label>
-            <input class="app-input" type="text" formControlName="title" />
+            <input
+              class="app-input"
+              type="text"
+              formControlName="title"
+              [ngClass]="{
+                'trend-edit-form__fields__input__error':
+                  form.controls.title.errors?.['required']
+                  && form.controls.title.touched
+              }"
+            />
+            <div
+              class="trend-edit-form__fields__error"
+              *ngIf="form.controls.title.errors?.['required']
+                && form.controls.title.touched"
+            >
+              Este campo es obligatorio
+            </div>
           </div>
 
           <div class="trend-edit-form__fields__input">
@@ -66,7 +129,19 @@ import { TrendService } from '../trend.service';
               type="textarea"
               formControlName="body"
               placeholder="Escribe aquí..."
+              [ngClass]="{
+                'trend-edit-form__fields__input__error':
+                  form.controls.body.errors?.['required']
+                  && form.controls.body.touched
+              }"
             ></textarea>
+            <div
+              class="trend-edit-form__fields__error"
+              *ngIf="form.controls.body.errors?.['required']
+                && form.controls.body.touched"
+            >
+              Este campo es obligatorio
+            </div>
           </div>
         </div>
       </form>
@@ -91,10 +166,7 @@ export class TrendEditComponent implements OnInit {
     body: new FormControl<string>('', [Validators.required]),
   });
 
-  constructor(
-    private store: Store,
-    private trendService: TrendService
-  ) {}
+  constructor(private store: Store, private trendService: TrendService) {}
 
   ngOnInit(): void {}
 
@@ -122,10 +194,7 @@ export class TrendEditComponent implements OnInit {
     if (this.isEdit && this.trendId) {
       //Edit
       this.trendService
-        .updateOne(
-          this.getUpdatedChanges(),
-          this.trendId
-        )
+        .updateOne(this.getUpdatedChanges(), this.trendId)
         .subscribe((res) => {
           //TODO: Update store
           this.onCancel();

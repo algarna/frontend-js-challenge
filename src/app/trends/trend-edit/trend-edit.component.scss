@@ -133,6 +133,17 @@
         height: 400px;
         resize: none;
       }
+
+      &__error {
+        border: 1px solid #FF0000 !important;
+      }
+    }
+
+    &__error {
+      width: 100%;
+      color: #FF0000;
+      text-align: left;
+      font-size: 0.8rem;
     }
   }
 }
