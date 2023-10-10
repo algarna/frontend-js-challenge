@@ -4,6 +4,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { GetAllTrendProvidersResponse } from '../models/get-all-trend-providers-response';
 import { TrendService } from '../trend.service';
+import { createOneTrend, updateOneTrend } from '../store/actions/trend-detail-page.actions';
+import { TrendProvider } from '../models/trend-provider.model';
 
 @Component({
   selector: 'app-trend-edit',
@@ -156,7 +158,7 @@ export class TrendEditComponent implements OnInit {
 
   getAllTrendProvidersResponse = GetAllTrendProvidersResponse;
 
-  trendId: string | null = null;
+  trend: Trend | null = null;
 
   public form = new FormGroup({
     url: new FormControl<string>('', [Validators.required]),
@@ -173,15 +175,13 @@ export class TrendEditComponent implements OnInit {
   toggle(isEdit: boolean = false, trend: Trend | null = null) {
     this.isActive = !this.isActive;
     this.isEdit = isEdit;
+    this.trend = trend;
     if (this.isEdit && trend) {
-      this.trendId = trend.id;
       this.form.get('url')?.setValue(trend.url);
       this.form.get('image')?.setValue(trend.image);
       this.form.get('provider')?.setValue(trend.provider);
       this.form.get('title')?.setValue(trend.title);
       this.form.get('body')?.setValue(trend.body.join('\n'));
-    } else {
-      this.trendId = null;
     }
   }
 
@@ -191,23 +191,22 @@ export class TrendEditComponent implements OnInit {
       return;
     }
 
-    if (this.isEdit && this.trendId) {
+    if (this.isEdit && this.trend) {
       //Edit
-      this.trendService
-        .updateOne(this.getUpdatedChanges(), this.trendId)
-        .subscribe((res) => {
-          //TODO: Update store
-          this.onCancel();
-        });
+      this.store
+        .dispatch(
+          updateOneTrend({
+            trend: this.getTrendWithChanges(this.trend),
+          })
+        );
     } else {
       //Add
-      const formTrend = this.form.value as Partial<Trend>;
-      this.trendService
-        .createOne(this.form.value as Partial<Trend>)
-        .subscribe((res) => {
-          //TODO: Update store
-          this.onCancel();
-        });
+      this.store.dispatch(
+        createOneTrend({
+          trend: this.form.value as Partial<Trend>,
+        })
+      );
+      this.onCancel();
     }
   }
 
@@ -216,14 +215,15 @@ export class TrendEditComponent implements OnInit {
     this.isActive = false;
   }
 
-  getUpdatedChanges() {
-    let changedValues: Record<string, string> = {};
-    Object.entries(this.form.controls).forEach((entry) => {
-      let [key, control] = entry;
-      if (control.dirty && key && control.value) {
-        changedValues[key] = control.value;
-      }
-    });
-    return changedValues;
+  getTrendWithChanges(trend: Trend): Trend {
+    const trendResult: Trend = {
+      ...trend,
+      url: this.form.get('url')?.value!,
+      image: this.form.get('image')?.value!,
+      provider:  this.form.get('provider')?.value! as TrendProvider,
+      title: this.form.get('title')?.value!,
+      body: [String(this.form.get('body')?.value!)],
+    };
+    return trendResult;
   }
 }

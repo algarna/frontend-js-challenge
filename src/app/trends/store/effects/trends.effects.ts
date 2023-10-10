@@ -38,13 +38,37 @@ export class TrendsEffects {
     );
   });
 
+  createOneTrend$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(TrendDetailPageActions.createOneTrend),
+      mergeMap((data) =>
+        this.trendService.createOne(data?.trend).pipe(
+          map((trend) => TrendsApiActions.createOneTrendSuccess({ trend })),
+          catchError(() => of(TrendsApiActions.createOneTrendError()))
+        )
+      )
+    );
+  });
+
+  updateOneTrend$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(TrendDetailPageActions.updateOneTrend),
+      switchMap((data) =>
+        this.trendService.updateOne(data?.trend).pipe(
+          map((trend) => TrendsApiActions.updateOneTrendSuccess({ trend })),
+          catchError(() => of(TrendsApiActions.updateOneTrendError()))
+        )
+      )
+    );
+  });
+
   deleteOneTrend$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(TrendDetailPageActions.deleteOneTrend),
       switchMap(({ id }) =>
         this.trendService.deleteOne(id).pipe(
-          map((hasDeleted) =>
-            hasDeleted
+          map((success) =>
+            success
               ? TrendsApiActions.deleteOneTrendSuccess({ id })
               : { type: 'NO ACTION' }
           ),
@@ -58,5 +82,6 @@ export class TrendsEffects {
   constructor(
     private actions$: Actions,
     private trendService: TrendService,
-    private router: Router) {}
+    private router: Router
+  ) {}
 }

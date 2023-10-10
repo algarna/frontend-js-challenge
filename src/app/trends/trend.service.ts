@@ -38,11 +38,11 @@ export class TrendService {
       .pipe(map(({ trend }) => this.mapToTrendModel(trend)));
   }
 
-  public updateOne(trend: Partial<Trend>, id: string): Observable<boolean> {
-    const url = `${this.getAllUrl}/${id}`;
+  public updateOne(trend: Trend): Observable<Trend> {
+    const url = `${this.getAllUrl}/${trend.id}`;
     return this.httpClient
-      .put<UpdateOneTrendResponse>(url, trend)
-      .pipe(map((response) => Boolean(response.modified)));
+      .put<UpdateOneTrendResponse>(url, this.mapToTrendRequest(trend))
+      .pipe(map((response) => trend));
   }
 
   public deleteOne(id: string): Observable<boolean> {
@@ -61,6 +61,16 @@ export class TrendService {
       provider: trendResponse.provider as TrendProvider,
       title: trendResponse.title,
       url: trendResponse.url,
+    };
+  }
+
+  private mapToTrendRequest(trend: Trend): any {
+    return {
+      body: trend.body.join('\n'),
+      image: trend.image,
+      provider: trend.provider,
+      title: trend.title,
+      url: trend.url,
     };
   }
 }

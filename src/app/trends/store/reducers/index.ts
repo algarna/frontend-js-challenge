@@ -33,6 +33,19 @@ export const trendsReducer = createReducer(
   on(TrendsApiActions.loadOneTrendError, (state): State => {
     return { ...state, selectedTrend: null };
   }),
+  on(TrendsApiActions.createOneTrendSuccess, (state, { trend }): State => {
+    return adapter.addOne(trend, state);
+  }),
+  on(TrendsApiActions.createOneTrendError, (state): State => {
+    return { ...state };
+  }),
+  on(TrendsApiActions.updateOneTrendSuccess, (state, { trend }): State => {
+    const updatedTrend = { ...state.selectedTrend, ...trend } as Trend;
+    return { ...state, selectedTrend: updatedTrend };
+  }),
+  on(TrendsApiActions.updateOneTrendError, (state): State => {
+    return { ...state };
+  }),
   on(TrendsApiActions.deleteOneTrendSuccess, (state, { id }) => {
     return adapter.removeOne(id, state);
   }),

@@ -18,6 +18,24 @@ export const loadOneTrendError = createAction(
   '[Trends/API] Load One Trend Error'
 );
 
+export const createOneTrendSuccess = createAction(
+  '[Trends/API] Create One Trend Success',
+  props<{ trend: Trend }>()
+);
+
+export const createOneTrendError = createAction(
+  '[Trends/API] Create One Trend Error'
+);
+
+export const updateOneTrendSuccess = createAction(
+  '[Trends/API] Update One Trend Success',
+  props<{ trend: Trend }>()
+);
+
+export const updateOneTrendError = createAction(
+  '[Trends/API] Update One Trend Error'
+);
+
 export const deleteOneTrendSuccess = createAction(
   '[Trends/API] Delete One Trend Success',
   props<{ id: string }>()

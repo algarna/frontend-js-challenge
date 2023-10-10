@@ -6,6 +6,7 @@ import { TrendEditComponent } from '../trend-edit/trend-edit.component';
 import { TrendService } from '../trend.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { deleteOneTrend } from '../store/actions/trend-detail-page.actions';
 
 @Component({
   selector: 'app-trend-detail',
@@ -85,9 +86,7 @@ export class TrendDetailComponent implements OnDestroy {
 
   deleteTrend(id: string) {
     if (confirm('¿Seguro que desea borrar esta noticia?')) {
-      this.trendService
-        .deleteOne(id)
-        .subscribe(() => this.router.navigate(['trends']));
+      this.store.dispatch(deleteOneTrend({ id }));
     }
   }
 
